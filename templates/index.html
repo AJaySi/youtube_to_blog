@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI YouTube Blog generation: Provide a URL and generate a blog. </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .pre-wrap {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-12">
+      <h1 class="text-4xl font-semibold mb-6">Free AI YouTube Blog generation</h1>
+
+      <div class="bg-white p-6 rounded shadow">
+        <form action="/transcribe" method="post">
+	  <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="openai_key"
+              >Your OpenAI API Key:</label
+            >
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="text"
+              name="openai_key"
+              id="openai_key"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label
+              class="block text-gray-700 text-sm font-bold mb-2"
+              for="video_url"
+              >Video URL:</label
+            >
+            <input
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              type="url"
+              name="video_url"
+              id="video_url"
+              required
+            />
+          </div>
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Transcribe
+          </button>
+        </form>
+
+        {% if transcription %}
+        <div class="mt-8">
+          <h2 class="text-2xl font-semibold mb-4">Transcription</h2>
+          <pre class="bg-gray-100 p-4 rounded pre-wrap">
+{{ transcription }}</pre
+          >
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
