@@ -30,12 +30,12 @@ Requirements
 
 Clone this repository:
 
-'''git clone https://github.com/YOUR_USERNAME/youtube-transcription-and-summarization.git'''
+	git clone https://github.com/YOUR_USERNAME/youtube-transcription-and-summarization.git
 
 
 2. Install the required dependencies:
 
-'''pip install -r requirements.txt'''
+	pip install -r requirements.txt
 
 
 ## Running the application
@@ -44,7 +44,7 @@ Clone this repository:
 
 flask run
 OR
-'''python app.py'''
+	python app.py
 
 ## License
 
