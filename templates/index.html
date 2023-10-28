@@ -9,50 +9,86 @@
      .pre-wrap {
        white-space: pre-wrap;
      }
+     input[type=range] {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+    }
    </style>
  </head>
  <body class="bg-gray-100">
    <div class="container mx-auto px-4 py-12">
      <h1 class="text-4xl font-semibold mb-6">LUMESH - Free AI Tool to generate blog from YouTube video URL</h1>
-
      <div class="bg-white p-6 rounded shadow">
-       <form action="/transcribe" method="post">
-    <div class="mb-4">
-	<label class="block text-gray-700 text-sm font-bold mb-2" for="openai_key">
-  	Your OpenAI API Key:
-  	<a href="https://platform.openai.com/api/" target="_blank" class="underline text-blue-500">Get your API key</a>
-	</label>
-
-           <input
-             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-             type="text"
-             name="openai_key"
-             id="openai_key"
-             required
-           />
-         </div>
-         <div class="mb-4">
-           <label
-             class="block text-gray-700 text-sm font-bold mb-2"
-             for="video_url"
-             >Youtube Video URL:</label
-           >
-           <input
-             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-             type="url"
-             name="video_url"
-             id="video_url"
-             required
-           />
-         </div>
-         <button
-           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-           type="submit"
-         >
-           Write Blog
-         </button>
-       </form>
-
+        <form action="/transcribe" method="post">
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="openai_key">
+      Your OpenAI API Key:
+      <a href="https://platform.openai.com/api/" target="_blank" class="underline text-blue-500">Get your API key</a>
+    </label>
+       <input
+      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      type="text"
+      name="openai_key"
+      id="openai_key"
+      required
+    />
+  </div>
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="video_url">
+      Youtube Video URL:
+    </label>
+    <input
+      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      type="url"
+      name="video_url"
+      id="video_url"
+      required
+    />
+  </div>
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="model">
+      Select AI Model: (Different models give different results. More models coming)
+    </label>
+    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="model" id="model">
+      <option value="gpt-3.5-turbo">Default: GPT-3.5 Turbo</option>
+      <option value="gpt-4">GPT-4</option>
+    </select>
+  </div>
+          <div class="mb-4">
+   <label class="block text-gray-700 text-sm font-bold mb-2" for="temperature">
+     Temperature: (Higher value gives more factual results, while lower ones are more creative.)
+   </label>
+   <input
+     type="range"
+     min="0.1"
+     max="1"
+     step="0.1"
+     name="temperature"
+     id="temperature"
+   />
+   <span id="selected-temperature">0.8</span>
+ </div>
+  <div class="mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="words">
+      Blog Length: Specify the number of words the written blog should contain
+    </label>
+    <input
+      type="range"
+      min="500"
+      max="3000"
+      step="500"
+      value="1000"
+      id="words"
+    />
+    <span id="current-value">1000</span>
+  </div>
+   <button
+    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+    type="submit"
+  >
+    Write Blog
+  </button>
+</form>
        {% if transcription %}
        <div class="mt-8">
          <h2 class="text-2xl font-semibold mb-4">Transcription</h2>
@@ -63,5 +99,19 @@
        {% endif %}
      </div>
    </div>
+   <script>
+           const slider = document.getElementById('words');
+        const currentValueSpan = document.querySelector('#current-value');
+        slider.addEventListener('change', () => {
+        currentValueSpan.innerHTML = slider.value;
+        });
+   </script>
+   <script>
+  const temperatureSlider = document.getElementById('temperature');
+  const selectedTemperatureElement = document.getElementById('selected-temperature');
+  temperatureSlider.addEventListener('change', () => {
+    selectedTemperatureElement.innerHTML = temperatureSlider.value;
+  });
+	   </script>
  </body>
 </html>
