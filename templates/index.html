@@ -1,117 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>AI YouTube Blog generation: Provide a URL and generate a blog. </title>
-   <script src="https://cdn.tailwindcss.com"></script>
-   <style>
-     .pre-wrap {
-       white-space: pre-wrap;
-     }
-     input[type=range] {
-        background-color: #f5f5f5;
-        border: 1px solid #ccc;
-    }
-   </style>
- </head>
- <body class="bg-gray-100">
-   <div class="container mx-auto px-4 py-12">
-     <h1 class="text-4xl font-semibold mb-6">LUMESH - Free AI Tool to generate blog from YouTube video URL</h1>
-     <div class="bg-white p-6 rounded shadow">
-        <form action="/transcribe" method="post">
-  <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="openai_key">
-      Your OpenAI API Key:
-      <a href="https://platform.openai.com/api/" target="_blank" class="underline text-blue-500">Get your API key</a>
-    </label>
-       <input
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      type="text"
-      name="openai_key"
-      id="openai_key"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="video_url">
-      Youtube Video URL:
-    </label>
-    <input
-      class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      type="url"
-      name="video_url"
-      id="video_url"
-      required
-    />
-  </div>
-  <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="model">
-      Select AI Model: (Different models give different results. More models coming)
-    </label>
-    <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="model" id="model">
-      <option value="gpt-3.5-turbo">Default: GPT-3.5 Turbo</option>
-      <option value="gpt-4">GPT-4</option>
-    </select>
-  </div>
-          <div class="mb-4">
-   <label class="block text-gray-700 text-sm font-bold mb-2" for="temperature">
-     Temperature: (Higher value gives more factual results, while lower ones are more creative.)
-   </label>
-   <input
-     type="range"
-     min="0.1"
-     max="1"
-     step="0.1"
-     name="temperature"
-     id="temperature"
-   />
-   <span id="selected-temperature">0.8</span>
- </div>
-  <div class="mb-4">
-    <label class="block text-gray-700 text-sm font-bold mb-2" for="words">
-      Blog Length: Specify the number of words the written blog should contain
-    </label>
-    <input
-      type="range"
-      min="500"
-      max="3000"
-      step="500"
-      value="1000"
-      id="words"
-    />
-    <span id="current-value">1000</span>
-  </div>
-   <button
-    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-    type="submit"
-  >
-    Write Blog
-  </button>
-</form>
-       {% if transcription %}
-       <div class="mt-8">
-         <h2 class="text-2xl font-semibold mb-4">Transcription</h2>
-         <pre class="bg-gray-100 p-4 rounded pre-wrap">
-{{ transcription }}</pre
-         >
-       </div>
-       {% endif %}
-     </div>
-   </div>
-   <script>
-           const slider = document.getElementById('words');
-        const currentValueSpan = document.querySelector('#current-value');
-        slider.addEventListener('change', () => {
-        currentValueSpan.innerHTML = slider.value;
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>&#9997; AI Blog Writer: Generate Engaging Content Instantly</title>
+    <meta name="description" content="AI Blog Writer: Create high-quality, engaging blogs instantly from YouTube videos. Our AI-powered tool transforms video transcripts into well-structured articles. Generate content effortlessly!">
+    <meta name="keywords" content="AI blog writer, generate blog content, AI-powered blogging, YouTube video to blog, content generation tool">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 50px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .sidebar .form-group .tooltiptext {
+            visibility: hidden;
+            width: max-content;
+            background-color: #333;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar .form-group:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .sidebar .input-group {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .input-group-prepend span {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+        }
+
+        .input-group input[type="range"] {
+            margin-left: 10px;
+            width: 70%;
+        }
+
+        .form-container {
+            flex: 1;
+            padding-left: 20px;
+            width: 80%;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        .form-group button {
+		background-color: #ff6f61;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .progress {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: #ff6f61;
+            margin-top: 10px;
+        }
+
+        .transcription {
+            margin-top: 30px;
+            color: #ffffff;
+        }
+	.form-control {
+            height: 40px;
+            font-size: 16px;
+        }
+
+        .form-group label {
+            margin-bottom: 10px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Coming-Up Features</h2>
+	    <div class="form-group">
+                <label class="text-gray-300 text-sm font-bold" for="model">
+                    🧠 Select AI Model:
+                </label>
+		<span class="tooltiptext">Set AI Model (Disabled)</span>
+                <select class="form-control" id="model" disabled>
+                    <option value="gpt-3.5">GPT-3.5</option>
+                    <option value="gpt-4">GPT-4</option>
+                </select>
+            </div>
+	    <div class="form-group">
+                <label class="text-gray-300 text-sm font-bold" for="output">
+                    📄 Blog Output:
+                </label>
+		<span class="tooltiptext">Select blog output format- Plaintext, HTML, Markdown (Disabled)</span>
+                <select class="form-control" id="output" disabled>
+                    <option value="plaintext">Plaintext</option>
+                    <option value="markdown">Markdown</option>
+                    <option value="html">HTML</option>
+                </select>
+            </div>
+	    <div class="form-group">
+                <label class="text-gray-300 text-sm font-bold" for="output">
+                    📄 Blog Language:
+                </label>
+                <span class="tooltiptext">Select the output language of Blog (Disabled)</span>
+                <select class="form-control" id="language">
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="urdu">Urdu</option>
+		    <option value="nepali">Nepali</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="text-gray-300 text-sm font-bold" for="temperature">
+                    🔥 Temperature:
+                    <span class="tooltiptext">Set the temperature (Disabled)</span>
+                </label>
+                <div class="input-group">
+                    <span>0.8</span>
+                    <input type="range" min="0.1" max="1" step="0.1" name="temperature" id="temperature" disabled>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="text-gray-300 text-sm font-bold" for="words">
+                    📏 Blog Length:
+                    <span class="tooltiptext">Specify the blog length (Disabled)</span>
+                </label>
+                <div class="input-group">
+                    <span>1000</span>
+                    <input type="range" min="500" max="3000" step="500" value="1000" id="words" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <h1 class="text-center mb-4">LUMESH - AI Blog Writer: Generate Engaging Content Instantly</h1>
+            <p class="text-center text-muted mb-4">Transform YouTube video transcripts into captivating articles with our AI-powered tool. Just enter your OpenAI API Key and the YouTube video URL to get started!</p>
+            <form method="post" action="/transcribe">
+                <div class="form-group">
+                    <label for="openai_key">🔑 OpenAI API Key:</label>
+                    <input type="text" class="form-control" id="openai_key" name="openai_key" required
+                        placeholder="Enter your OpenAI API Key">
+                </div>
+                <div class="form-group">
+                    <label for="video_url">🎥 YouTube Video URL:</label>
+                    <input type="url" class="form-control" id="video_url" name="video_url" required
+                        placeholder="Enter YouTube Video URL">
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block mt-4">Generate Blog</button>
+            </form>
+
+            <div class="progress mt-3">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100"
+                    aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+		  {% if error %}
+            <div class="error-message mt-3">{{ error }}</div>
+            {% endif %}
+
+            {% if img_src %}
+            <img src="{{ img_src }}" class="video-preview mt-4" alt="Video Screenshot">
+            {% endif %}
+
+            {% if transcription %}
+            <div class="transcription mt-4">
+                <h2>Generated Blog Content:</h2>
+                <pre>{{ transcription }}</pre>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function () {
+            document.querySelector('.progress').style.display = 'block';
         });
-   </script>
-   <script>
-  const temperatureSlider = document.getElementById('temperature');
-  const selectedTemperatureElement = document.getElementById('selected-temperature');
-  temperatureSlider.addEventListener('change', () => {
-    selectedTemperatureElement.innerHTML = temperatureSlider.value;
-  });
-	   </script>
- </body>
+    </script>
+</body>
+
 </html>
+
